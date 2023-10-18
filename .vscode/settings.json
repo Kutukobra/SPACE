@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "raylib.h": "c"
+        "raylib.h": "c",
+        "game.h": "c",
+        "data_structures.h": "c"
     }
 }

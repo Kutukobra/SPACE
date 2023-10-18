@@ -1,6 +1,8 @@
+#include <stdio.h>  
 #include "raylib.h"
 #include "raymath.h"
-#include <stdio.h>
+
+#include "data_structures.h"
 
 #define GRID_SIZE 40
 #define GRID_WIDTH  (GetScreenWidth()  / GRID_SIZE)
@@ -20,6 +22,13 @@ Object Snake = {
     {0, 0}, 
     {0x60, 0xF4, 0x60, 0xFF}
 };
+
+typedef struct Tail
+{
+    unsigned int length;
+    Vector2 pos[160];
+
+} Tail;
 
 // Drawing Rectangles
 const int OFFSET = 2;
@@ -71,7 +80,7 @@ void Update()
     // Updating Snake Position
     Snake.pos = Vector2Add(Snake.pos, Snake.vel);
 
-    // 
+    // Snake bounds
     if (Snake.pos.x >= GRID_WIDTH) Snake.pos.x = 0;
     if (Snake.pos.x < 0) Snake.pos.x = GRID_WIDTH - 1;
     if (Snake.pos.y >= GRID_HEIGHT) Snake.pos.y = 0;

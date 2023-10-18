@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include <stdio.h>
 #include "Game.h"
+#include "data_structures.h"
 
 #define FPS 15
 #define WINDOW_HEIGHT 800
@@ -8,7 +9,7 @@
 
 int main(void)
 {
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "SNAKE, FAIZ IS A BIT GAY BTW SORRY");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT FIB");
     SetTargetFPS(FPS);
 
     Setup();
