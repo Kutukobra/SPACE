@@ -1,15 +1,19 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "Game.h"
 #include "data_structures.h"
 
-#define FPS 15
-#define WINDOW_HEIGHT 800
-#define WINDOW_WIDTH 800
+#define FPS 60
+#define WINDOW_HEIGHT 801
+#define WINDOW_WIDTH 801
 
 int main(void)
 {
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT FIB");
+    srand(time(NULL));
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT SASTRA ARAB");
+    InitAudioDevice();
     SetTargetFPS(FPS);
 
     Setup();
@@ -25,6 +29,7 @@ int main(void)
         EndDrawing();
     }
     CloseWindow();
+    CloseAudioDevice();
     printf("WINDOW CLOSED!\n");
     return 0;
 }
