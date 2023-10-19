@@ -8,6 +8,18 @@ typedef struct NodeV2
     struct NodeV2* next;
 } NodeV2;
 
+
+void TransverseNodes(NodeV2* n, void (*f)(NodeV2* p))
+{
+    NodeV2* i = n;
+    while (i != NULL)
+    {
+        (*f)(i);
+        i = i->next;
+    }
+}
+
+
 typedef struct QueueV2
 {
     NodeV2* head;
