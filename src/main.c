@@ -13,6 +13,7 @@ int main(void)
     SetTargetFPS(FPS);
 
     Setup();
+    printf("SETUP COMPLETED!\n");
     while (!WindowShouldClose())
     {
         Inputs();
@@ -24,5 +25,6 @@ int main(void)
         EndDrawing();
     }
     CloseWindow();
+    printf("WINDOW CLOSED!\n");
     return 0;
 }
