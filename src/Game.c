@@ -22,13 +22,9 @@ Object Snake = {
     {0, 0}, 
     {0x60, 0xF4, 0x60, 0xFF}
 };
+int score = 5;
 
-typedef struct Tail
-{
-    unsigned int length;
-    Vector2 pos[160];
-
-} Tail;
+QueueV2 tail = {NULL, NULL, 0};
 
 // Drawing Rectangles
 const int OFFSET = 2;
@@ -36,7 +32,6 @@ void DrawObject (Object* a)
 {
     DrawRectangle(a->pos.x * GRID_SIZE + OFFSET, a->pos.y * GRID_SIZE + OFFSET, GRID_SIZE -OFFSET, GRID_SIZE - OFFSET, a->color);
 }
-
 
 // Taking Inputs
 const float SNAKE_SPEED = 1;
@@ -77,6 +72,14 @@ void Setup()
 // Repeat Every Frame
 void Update()
 {
+    // Adding Length
+    QueueV2_add(&tail, Snake.pos);
+    // Removing Excess
+    while (tail.length > score)
+    {
+        QueueV2_pop(&tail);
+    }
+
     // Updating Snake Position
     Snake.pos = Vector2Add(Snake.pos, Snake.vel);
 
@@ -85,6 +88,8 @@ void Update()
     if (Snake.pos.x < 0) Snake.pos.x = GRID_WIDTH - 1;
     if (Snake.pos.y >= GRID_HEIGHT) Snake.pos.y = 0;
     if (Snake.pos.y < 0) Snake.pos.y = GRID_HEIGHT - 1;
+
+
 }
 
 // Drawing
