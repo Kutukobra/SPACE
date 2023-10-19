@@ -1,33 +1,50 @@
 #include <stdio.h>  
 #include "raylib.h"
 #include "raymath.h"
+#include <math.h>
+#include <stdlib.h>
 
 #include "data_structures.h"
 
 #define GRID_SIZE 40
 #define GRID_WIDTH  (GetScreenWidth()  / GRID_SIZE)
 #define GRID_HEIGHT (GetScreenHeight() / GRID_SIZE)
+const int OFFSET = 2;
 
 // Game Object Struct
 typedef struct GameObject
 {
+    Color color;
     Vector2 pos;
     Vector2 vel;
-    Color color;
 } Object;
 
 // Snake Controllable
 Object Snake = {
+    {0x60, 0xF4, 0x60, 0xFF},
     {0, 0}, 
-    {0, 0}, 
-    {0x60, 0xF4, 0x60, 0xFF}
+    {0, 0}
 };
 int score = 5;
+QueueV2 tail;
 
-QueueV2 tail = {NULL, NULL, 0};
+Object Apple = {
+    {0xF4, 0x60, 0x60, 0xFF},
+    {0, 0},
+    {0, 0}
+};
+
+void DrawTail (QueueV2* tail)
+{
+    NodeV2* i = tail->head;
+    while (i != NULL)
+    {
+        DrawRectangle(i->val.x * GRID_SIZE + OFFSET, i->val.y * GRID_SIZE + OFFSET, GRID_SIZE - OFFSET, GRID_SIZE - OFFSET, Snake.color);
+        i = i->next;
+    }
+}
 
 // Drawing Rectangles
-const int OFFSET = 2;
 void DrawObject (Object* a)
 {
     DrawRectangle(a->pos.x * GRID_SIZE + OFFSET, a->pos.y * GRID_SIZE + OFFSET, GRID_SIZE -OFFSET, GRID_SIZE - OFFSET, a->color);
@@ -66,7 +83,9 @@ void Inputs()
 // Setting Up 
 void Setup()
 {
-
+    QueueV2_Init(&tail);
+    Apple.pos.x = floor(rand() * GRID_WIDTH);
+    Apple.pos.y = floor(rand() * GRID_HEIGHT);
 }
 
 // Repeat Every Frame
@@ -101,5 +120,7 @@ void Draw()
     {
         DrawRectangle(j * GRID_SIZE + OFFSET, i * GRID_SIZE + OFFSET, GRID_SIZE - OFFSET, GRID_SIZE - OFFSET, BLACK);
     }
-    DrawObject(&Snake);    
+    DrawObject(&Snake);
+    DrawTail(&tail);
+    DrawObject(&Apple);
 }

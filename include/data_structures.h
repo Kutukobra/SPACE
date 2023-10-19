@@ -16,6 +16,8 @@ typedef struct QueueV2
     int length;
 } QueueV2, QV2;
 
+void QueueV2_Init(QueueV2* q);
+
 void QueueV2_add(QueueV2* q, Vector2 val);
 Vector2 QueueV2_pop(QueueV2* q);
 

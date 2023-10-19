@@ -1,14 +1,17 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "Game.h"
 #include "data_structures.h"
 
-#define FPS 15
+#define FPS 10
 #define WINDOW_HEIGHT 800
 #define WINDOW_WIDTH 800
 
 int main(void)
 {
+    srand(time(NULL));
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT FIB");
     SetTargetFPS(FPS);
 

@@ -15,21 +15,41 @@ typedef struct QueueV2
     int length;
 } QueueV2, QV2;
 
+void QueueV2_Init(QueueV2* q)
+{
+    q->head = NULL;
+    q->tail = NULL;
+    q->length = 0;
+}
+
 void QueueV2_add(QueueV2* q, Vector2 val)
 {
-    printf("Adding...\n");
-    //NodeV2* add = (NodeV2*)malloc(sizeof(NodeV2));
-    //q->tail = (q->tail->next = add);
+    NodeV2* add = malloc(sizeof(NodeV2));
+    add->val = val;
+    add->next = NULL;
+    if (q->head == NULL)
+    {
+        q->head = add;
+    }
+    if (q->tail != NULL)
+    {
+        q->tail->next = add;
+    }
+    q->tail = add;
     q->length++;
-    printf("Added\n");
 }
 
 Vector2 QueueV2_pop(QueueV2* q)
 {
+    if (q->length <= 0)
+    {
+        return (Vector2){1, 0};
+    }
+
     Vector2 ret = (q->head->val);
-    NodeV2* temp = q->head;
+    NodeV2* rem = q->head;
     q->head = q->head->next;
+    free(rem);
     q->length--;
-    free(temp);
     return ret;
 }
