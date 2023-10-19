@@ -6,13 +6,13 @@
 #include "data_structures.h"
 
 #define FPS 60
-#define WINDOW_HEIGHT 800
-#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 801
+#define WINDOW_WIDTH 801
 
 int main(void)
 {
     srand(time(NULL));
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT FIB");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "ULAR KADUT SASTRA ARAB");
     InitAudioDevice();
     SetTargetFPS(FPS);
 

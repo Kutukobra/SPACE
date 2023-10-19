@@ -8,6 +8,10 @@ typedef struct NodeV2
     struct NodeV2* next;
 } NodeV2;
 
+void NodeV2_Print(NodeV2* n)
+{
+    printf("%lf %lf\n", n->val.x, n->val.y);
+}
 
 void TransverseNodes(NodeV2* n, void (*f)(NodeV2* p))
 {
@@ -26,6 +30,11 @@ typedef struct QueueV2
     NodeV2* tail;
     int length;
 } QueueV2, QV2;
+
+void QueueV2_Print(QueueV2* q)
+{
+    TransverseNodes(q->head, NodeV2_Print);
+}
 
 void QueueV2_Init(QueueV2* q)
 {

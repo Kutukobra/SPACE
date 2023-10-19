@@ -12,6 +12,7 @@
 const int OFFSET = 2;
 
 Sound alhm;
+Music wadimor;
 
 // Returns true if 2 Vector2 are equal
 bool isSameVector2 (Vector2 a, Vector2 b)
@@ -37,6 +38,17 @@ Object Snake = {
 };
 int score = 5;
 QueueV2 tail;
+
+
+// Check tail-head trasnversed
+void CheckTailHead(NodeV2* t)
+{
+    //printf("%.2f %.2f\n", t->val.x, t->val.y);
+    if (isSameVector2(t->val, Snake.pos))
+    {
+        score = 5;
+    }
+}
 
 // Apple 
 Object Apple = {
@@ -100,6 +112,11 @@ void Inputs()
 void Setup()
 {
     alhm = LoadSound("../assets/al.mp3");
+    SetSoundPitch(alhm, 0.98);
+    wadimor = LoadMusicStream("../assets/wadimor.mp3");
+    SetSoundVolume(alhm, 1.3);
+    SetMusicVolume(wadimor, 0.25);
+    PlayMusicStream(wadimor);
     QueueV2_Init(&tail);
     MoveApple();
 }
@@ -107,6 +124,15 @@ void Setup()
 // Repeat Every Frame
 void Update()
 {
+    UpdateMusicStream(wadimor);
+
+    // Check for collision with tail
+    //TransverseNodes(tail.head, CheckTailHead);
+
+
+    //QueueV2_Print(&tail);
+    QueueV2_add(&tail, (Vector2){Snake.pos.x, Snake.pos.y});
+
     // Removing Excess
     while (tail.length > (score / SNAKE_SPEED))
     {
@@ -132,9 +158,6 @@ void Update()
         PlaySound(alhm);
         MoveApple();
     }
-    
-    // Adding Length
-    QueueV2_add(&tail, (Vector2){Snake.pos.x, Snake.pos.y});
 }
 
 // Drawing
@@ -148,5 +171,7 @@ void Draw()
     }
     DrawObject(&Snake);
     TransverseNodes(tail.head, DrawTail);
+    putchar('\n');
+    putchar('\n');
     DrawObject(&Apple);
 }
