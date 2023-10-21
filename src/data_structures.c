@@ -5,21 +5,12 @@
 typedef struct NodeV2
 {
     Vector2 val;
-    struct NodeV2* next;
+    struct NodeV2 *next;
 } NodeV2;
 
 NodeV2* NV2_Init(Vector2 val)
 {
-    NodeV2* ret = malloc(sizeof(NodeV2));
-    ret->val = val;
-    ret->next = NULL;
-    return ret;
-}
-
-void NV2_Print(NodeV2* n)
-NodeV2* NV2_Init(Vector2 val)
-{
-    NodeV2* ret = malloc(sizeof(NodeV2));
+    NodeV2* ret = (NodeV2*)malloc(sizeof(NodeV2));
     ret->val = val;
     ret->next = NULL;
     return ret;
@@ -30,7 +21,7 @@ void NV2_Print(NodeV2* n)
     printf("%lf %lf\n", n->val.x, n->val.y);
 }
 
-void TransverseNodes(NodeV2* n, void (*f)(NodeV2* p))
+void TransverseNodes(NodeV2 *n, void (*f)(NodeV2 *p))
 {
     NodeV2* i = n;
     while (i != NULL)
@@ -54,7 +45,7 @@ void QV2_Print(QueueV2* q)
 
 QueueV2* QV2_Init()
 {
-    QueueV2* q = malloc(sizeof(QueueV2));
+    QueueV2* q = (QueueV2*)malloc(sizeof(QueueV2));
     q->head = NULL;
     q->tail = NULL;
     q->length = 0;

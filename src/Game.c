@@ -2,14 +2,13 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <math.h>
-#include <stdlib.h>
 
 #include "data_structures.h"
 #include "game_functions.h"
 #include "inputs.h"
 
-#define GRID_WIDTH  20
-#define GRID_HEIGHT 20
+const int GRID_WIDTH = 20;
+const int GRID_HEIGHT = 20;
 const int gridSize = 40;
 const int offset = 2;
 
@@ -25,6 +24,7 @@ Object Snake = {
     {0, 0}
 };
 int SCORE = 5;
+Vector2 pastpos;
 
 QueueV2 tails;
 
@@ -47,40 +47,41 @@ void Setup()
     SetMusicVolume(wadimor, 0.25);
     PlayMusicStream(wadimor);
 
+    // Initializing tails
     QV2_Init(&tails);
 
+    // Apple Starting position
     MoveRandom(&Apple);
+
+    // Snake Starting position
+    MoveRandom(&Snake);
+    Snake.rpos = Snake.pos;
+    pastpos = Snake.pos;
+
+    QV2_add(&tails, Snake.pos);
+    QV2_add(&tails, Snake.pos);
 }
 
 // Repeat Every Frame
 void Update()
 {
-    UpdateMusicStream(wadimor);
-
-    // Check for collision with tail
-    TransverseNodes(tails.head, CheckTailHead);
-
-
-    //QueueV2_Print(&tail);
-    QV2_add(&tails, Snake.pos);
-
-    // Removing Excess
-    while (tails.length > SCORE)
-    {
-        QV2_pop(&tails);
-    }
+    //UpdateMusicStream(wadimor);
 
     // Updating Snake Position
     Snake.rpos = Vector2Add(Snake.rpos, Snake.vel);
-    //printf("%f %f : %f %f\n", Snake.rpos.x , Snake.rpos.y, Snake.pos.x, Snake.pos.y);
 
-    // Snake bounds on grid
-    if (Snake.pos.x >= GRID_WIDTH) Snake.rpos.x = 0;
-    if (Snake.pos.x < 0) Snake.rpos.x = GRID_WIDTH - 1;
-    if (Snake.pos.y >= GRID_HEIGHT) Snake.rpos.y = 0;
-    if (Snake.pos.y < 0) Snake.rpos.y = GRID_HEIGHT - 1;
+     // Snake bounds on grid
+    if (Snake.rpos.x >= GRID_WIDTH) Snake.rpos.x = 0;
+    if (Snake.rpos.x < 0) Snake.rpos.x = GRID_WIDTH - 1;
+    if (Snake.rpos.y >= GRID_HEIGHT) Snake.rpos.y = 0;
+    if (Snake.rpos.y < 0) Snake.rpos.y = GRID_HEIGHT - 1;
 
-    Snake.pos = (Vector2){round(Snake.rpos.x), round(Snake.rpos.y)};
+    // Rounding for grid
+    Snake.pos = (Vector2){floor(Snake.rpos.x), floor(Snake.rpos.y)};
+
+    //printf("%p\n", tails.head->next);
+    // Check for collision with tail
+    TransverseNodes(tails.head, CheckTailHead);
 
     // Check if Snake head is on the same position with apple on the grid
     if (Vector2Equals(Snake.pos, Apple.pos))
@@ -89,6 +90,19 @@ void Update()
         PlaySound(alhm);
         MoveRandom(&Apple);
     }
+
+
+    if (!Vector2Equals(Snake.pos, pastpos))
+    {
+        QV2_add(&tails, Snake.pos);
+    }
+
+    // Removing Excess
+    while (tails.length > SCORE)
+    {
+        QV2_pop(&tails);
+    }
+    pastpos = Snake.pos;
 }
 
 // Drawing
