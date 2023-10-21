@@ -2,9 +2,12 @@
 #define GF
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "data_structures.h"
+
+void Vector2Print(Vector2 *n);
 
 // Game Object Struct: Color, position on grid, real floating position, velocity
 typedef struct Object
@@ -15,14 +18,14 @@ typedef struct Object
     Vector2 vel;
 } Object;
 
-void MoveRandom(Object* o);
+void MoveRandom(Object *o);
 
 // Drawing Rectangles
 // Floor to fit grid
-void DrawObjectGrid(Object* a);
-void DrawTailGrid(NodeV2* i);
+void DrawObjectGrid(Object *a);
+void DrawTailGrid(NodeV2 *i);
 // Check tail-head transversed
-void CheckTailHead(NodeV2* t);
+void CheckTailHead(NodeV2 *t);
 
 
 #endif
