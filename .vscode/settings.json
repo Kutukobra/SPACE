@@ -3,6 +3,7 @@
         "stdio.h": "c",
         "raylib.h": "c",
         "game.h": "c",
-        "data_structures.h": "c"
+        "data_structures.h": "c",
+        "game_function.h": "c"
     }
 }

@@ -5,50 +5,28 @@
 #include <stdlib.h>
 
 #include "data_structures.h"
+#include "game_functions.h"
+#include "inputs.h"
 
-#define GRID_SIZE 40
 #define GRID_WIDTH  20
 #define GRID_HEIGHT 20
-const int OFFSET = 2;
+const int gridSize = 40;
+const int offset = 2;
 
 Sound alhm;
 Music wadimor;
-
-// Returns true if 2 Vector2 are equal
-bool isSameVector2 (Vector2 a, Vector2 b)
-{
-    return (a.x == b.x && a.y == b.y);
-}
-
-// Game Object Struct: Color, position on grid, real floating position, velocity
-typedef struct GameObject
-{
-    Color color;
-    Vector2 pos;
-    Vector2 rpos;
-    Vector2 vel;
-} Object;
+void Background();
 
 // Snake (head) Controllable
 Object Snake = {
-    {0x60, 0xF4, 0x60, 0xFF},
+    {0x60, 0xFF, 0x60, 0xFF},
     {0, 0}, 
     {0, 0},
     {0, 0}
 };
-int score = 5;
-QueueV2 tail;
+int SCORE = 5;
 
-
-// Check tail-head trasnversed
-void CheckTailHead(NodeV2* t)
-{
-    //printf("%.2f %.2f\n", t->val.x, t->val.y);
-    if (isSameVector2(t->val, Snake.pos))
-    {
-        score = 5;
-    }
-}
+QueueV2 tails;
 
 // Apple 
 Object Apple = {
@@ -58,67 +36,20 @@ Object Apple = {
     {0, 0}
 };
 
-// Randomize Apple Position
-void MoveApple()
-{
-    Apple.pos.x = (rand() % GRID_WIDTH);
-    Apple.pos.y = (rand() % GRID_HEIGHT);
-}
-
-// Drawing Transversed Linkedlist
-void DrawTail (NodeV2* i)
-{
-    DrawRectangle(i->val.x * GRID_SIZE + OFFSET, i->val.y * GRID_SIZE + OFFSET, GRID_SIZE - OFFSET, GRID_SIZE - OFFSET, Snake.color);
-}
-
-// Drawing Rectangles
-// Floor to fit grid
-void DrawObject (Object* a)
-{
-    DrawRectangle(a->pos.x * GRID_SIZE + OFFSET, a->pos.y * GRID_SIZE + OFFSET, GRID_SIZE -OFFSET, GRID_SIZE - OFFSET, a->color);
-}
-
-// Taking Inputs
-const float SNAKE_SPEED = 0.25;
-void Inputs()
-{
-    static int LastKeyPressed = 0;
-    if (IsKeyPressed(KEY_UP) && LastKeyPressed != KEY_DOWN)
-    {
-        LastKeyPressed = KEY_UP;
-        Snake.vel = (Vector2){0, -SNAKE_SPEED};
-    }
-
-    if (IsKeyPressed(KEY_DOWN) && LastKeyPressed != KEY_UP)
-    {
-        LastKeyPressed = KEY_DOWN;
-        Snake.vel = (Vector2){0, SNAKE_SPEED};
-    }
-
-    if (IsKeyPressed(KEY_LEFT) && LastKeyPressed != KEY_RIGHT)
-    {
-        LastKeyPressed = KEY_LEFT;
-        Snake.vel = (Vector2){-SNAKE_SPEED, 0};
-    }
-
-    if (IsKeyPressed(KEY_RIGHT) && LastKeyPressed != KEY_LEFT)
-    {
-        LastKeyPressed = KEY_RIGHT;
-        Snake.vel = (Vector2){SNAKE_SPEED, 0};
-    }
-}
-
 // Setting Up 
 void Setup()
 {
     alhm = LoadSound("../assets/al.mp3");
     SetSoundPitch(alhm, 0.98);
-    wadimor = LoadMusicStream("../assets/wadimor.mp3");
     SetSoundVolume(alhm, 1.3);
+
+    wadimor = LoadMusicStream("../assets/wadimor.mp3");
     SetMusicVolume(wadimor, 0.25);
     PlayMusicStream(wadimor);
-    QueueV2_Init(&tail);
-    MoveApple();
+
+    QV2_Init(&tails);
+
+    MoveRandom(&Apple);
 }
 
 // Repeat Every Frame
@@ -127,16 +58,16 @@ void Update()
     UpdateMusicStream(wadimor);
 
     // Check for collision with tail
-    //TransverseNodes(tail.head, CheckTailHead);
+    TransverseNodes(tails.head, CheckTailHead);
 
 
     //QueueV2_Print(&tail);
-    QueueV2_add(&tail, (Vector2){Snake.pos.x, Snake.pos.y});
+    QV2_add(&tails, Snake.pos);
 
     // Removing Excess
-    while (tail.length > (score / SNAKE_SPEED))
+    while (tails.length > SCORE)
     {
-        QueueV2_pop(&tail);
+        QV2_pop(&tails);
     }
 
     // Updating Snake Position
@@ -152,26 +83,29 @@ void Update()
     Snake.pos = (Vector2){round(Snake.rpos.x), round(Snake.rpos.y)};
 
     // Check if Snake head is on the same position with apple on the grid
-    if (isSameVector2(Snake.pos, Apple.pos))
+    if (Vector2Equals(Snake.pos, Apple.pos))
     {
-        score++;
+        SCORE++;
         PlaySound(alhm);
-        MoveApple();
+        MoveRandom(&Apple);
     }
 }
 
 // Drawing
 void Draw()
 {
+    Background();
+    TransverseNodes(tails.head, DrawTailGrid);
+    DrawObjectGrid(&Apple);
+}
+
+void Background()
+{
     ClearBackground((Color){0x20, 0x20, 0x20, 0xFF});
     for (int i = 0; i < GRID_HEIGHT; i++)
     for (int j = 0; j < GRID_WIDTH; j++)
     {
-        DrawRectangle(j * GRID_SIZE + OFFSET, i * GRID_SIZE + OFFSET, GRID_SIZE - OFFSET, GRID_SIZE - OFFSET, BLACK);
+        DrawRectangle(j * gridSize + offset, i * gridSize + offset, gridSize - offset, gridSize - offset, BLACK);
     }
-    DrawObject(&Snake);
-    TransverseNodes(tail.head, DrawTail);
-    putchar('\n');
-    putchar('\n');
-    DrawObject(&Apple);
+    DrawObjectGrid(&Snake);
 }
