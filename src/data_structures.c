@@ -17,6 +17,15 @@ NodeV2* NV2_Init(Vector2 val)
 }
 
 void NV2_Print(NodeV2* n)
+NodeV2* NV2_Init(Vector2 val)
+{
+    NodeV2* ret = malloc(sizeof(NodeV2));
+    ret->val = val;
+    ret->next = NULL;
+    return ret;
+}
+
+void NV2_Print(NodeV2* n)
 {
     printf("%lf %lf\n", n->val.x, n->val.y);
 }
@@ -83,8 +92,7 @@ Vector2 QV2_pop(QueueV2* q)
     Vector2 ret = (q->head->val);
     NodeV2* tem = q->head;
     q->head = q->head->next;
-    q->length--;
-    if (q->head == NULL) q->tail = NULL;
     free(tem);
+    q->length--;
     return ret;
 }
