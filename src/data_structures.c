@@ -5,15 +5,23 @@
 typedef struct NodeV2
 {
     Vector2 val;
-    struct NodeV2* next;
+    struct NodeV2 *next;
 } NodeV2;
 
-void NodeV2_Print(NodeV2* n)
+NodeV2* NV2_Init(Vector2 val)
+{
+    NodeV2* ret = (NodeV2*)malloc(sizeof(NodeV2));
+    ret->val = val;
+    ret->next = NULL;
+    return ret;
+}
+
+void NV2_Print(NodeV2* n)
 {
     printf("%lf %lf\n", n->val.x, n->val.y);
 }
 
-void TransverseNodes(NodeV2* n, void (*f)(NodeV2* p))
+void TransverseNodes(NodeV2 *n, void (*f)(NodeV2 *p))
 {
     NodeV2* i = n;
     while (i != NULL)
@@ -23,36 +31,40 @@ void TransverseNodes(NodeV2* n, void (*f)(NodeV2* p))
     }
 }
 
-
 typedef struct QueueV2
 {
     NodeV2* head;
     NodeV2* tail;
     int length;
-} QueueV2, QV2;
+} QueueV2;
 
-void QueueV2_Print(QueueV2* q)
+void QV2_Print(QueueV2* q)
 {
-    TransverseNodes(q->head, NodeV2_Print);
+    TransverseNodes(q->head, NV2_Print);
 }
 
-void QueueV2_Init(QueueV2* q)
+QueueV2* QV2_Init()
 {
+    QueueV2* q = (QueueV2*)malloc(sizeof(QueueV2));
     q->head = NULL;
     q->tail = NULL;
     q->length = 0;
+    return q;
 }
 
-void QueueV2_add(QueueV2* q, Vector2 val)
+bool QV2_isEmpty(QueueV2* q)
 {
-    NodeV2* add = malloc(sizeof(NodeV2));
-    add->val = val;
-    add->next = NULL;
-    if (q->head == NULL)
+    return q->head == NULL;
+}
+
+void QV2_add(QueueV2* q, Vector2 val)
+{
+    NodeV2* add = NV2_Init(val);
+    if (QV2_isEmpty(q))
     {
         q->head = add;
     }
-    if (q->tail != NULL)
+    else
     {
         q->tail->next = add;
     }
@@ -60,17 +72,18 @@ void QueueV2_add(QueueV2* q, Vector2 val)
     q->length++;
 }
 
-Vector2 QueueV2_pop(QueueV2* q)
+Vector2 QV2_pop(QueueV2* q)
 {
-    if (q->length <= 0)
+    if (QV2_isEmpty(q))
     {
-        return (Vector2){1, 0};
+        printf("ERROR: TRIED TO POP AN EMPTY QUEUE\n");
+        return (Vector2){-1, -1};
     }
 
     Vector2 ret = (q->head->val);
-    NodeV2* rem = q->head;
+    NodeV2* tem = q->head;
     q->head = q->head->next;
-    free(rem);
+    free(tem);
     q->length--;
     return ret;
 }
