@@ -5,6 +5,7 @@
 #include "data_structures.h"
 
 extern const int gridSize, offset, GRID_WIDTH, GRID_HEIGHT;
+extern int HIGHSCORE;
 
 void Vector2Print(Vector2* n)
 {
@@ -48,6 +49,7 @@ void CheckTailHead(NodeV2 *t)
     if (Vector2Equals(t->val, Snake.pos) && !(t->next == NULL))
     {
         printf("HIT:\n");
+        if (SCORE > HIGHSCORE) HIGHSCORE = SCORE;
         SCORE = 5;
     }
 }
