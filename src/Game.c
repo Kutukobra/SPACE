@@ -10,25 +10,25 @@
 const int GRID_WIDTH = 20;
 const int GRID_HEIGHT = 20;
 const int gridSize = 40;
-const int offset = 2;
+const int offset = 1;
 int GAME_WIDTH;
 int GAME_HEIGHT;
 
 Vector2 SCOREBOARD;
 Image _desert;
-Texture2D desert;
+
+Sound death;
 Sound alhm;
 Music wadimor;
-extern FILE *_HIGHSCORE;
 int HIGHSCORE;
 void Background();
 
 // Snake (head) Controllable
 Object Snake = {
-    {0x60, 0xFF, 0x60, 0xFF},
-    {0, 0}, 
-    {0, 0},
-    {0, 0}
+    {0x60, 0xFF, 0x60, 0xFF}, // Color
+    {0, 0}, // Position on grid
+    {0, 0}, // Actual position
+    {0, 1} // Velocity
 };
 int SCORE = 5;
 Vector2 pastpos;
@@ -52,18 +52,16 @@ void Inits()
     // Init Scoreboard position
     SCOREBOARD = (Vector2){(float)(GAME_WIDTH + 6), (float)(300)};
 
+    // Load sounds
     alhm = LoadSound("../assets/al.mp3");
     SetSoundPitch(alhm, 0.98);
-    SetSoundVolume(alhm, 1.3);
+    SetSoundVolume(alhm, 1.0);
 
     wadimor = LoadMusicStream("../assets/wadimor.mp3");
     SetMusicVolume(wadimor, 0.25);
     PlayMusicStream(wadimor);
 
-    _desert = LoadImage("../assets/desert.png");
-    ImageResize(&_desert, GAME_WIDTH, GAME_HEIGHT);
-    desert = LoadTextureFromImage(_desert);
-    UnloadImage(_desert);
+    death = LoadSound("../assets/death.wav");
 
     // Initializing tails
     QV2_Init(&tails);
@@ -82,6 +80,7 @@ void Setup()
     Snake.rpos = Snake.pos;
     pastpos = Snake.pos;
 
+    // I firgot why but this is required
     QV2_add(&tails, Snake.pos);
     QV2_add(&tails, Snake.pos);
 }
@@ -89,7 +88,8 @@ void Setup()
 // Repeat Every Frame
 void Update()
 {
-    //UpdateMusicStream(wadimor);
+    // Update music
+    UpdateMusicStream(wadimor);
 
     // Updating Snake Position
     Snake.rpos = Vector2Add(Snake.rpos, Snake.vel);
@@ -100,10 +100,9 @@ void Update()
     if (Snake.rpos.y >= GRID_HEIGHT) Snake.rpos.y = 0;
     if (Snake.rpos.y < 0) Snake.rpos.y = GRID_HEIGHT - 1;
 
-    // Rounding for grid
-    Snake.pos = (Vector2){floor(Snake.rpos.x), floor(Snake.rpos.y)};
+    // Rounding actual position for grid position
+    Snake.pos = (Vector2){round(Snake.rpos.x), round(Snake.rpos.y)};
 
-    //printf("%p\n", tails.head->next);
     // Check for collision with tail
     TransverseNodes(tails.head, CheckTailHead);
 
@@ -115,49 +114,63 @@ void Update()
         MoveRandom(&Apple);
     }
 
-
+    // Storing tail as a queue of past grid positions
     if (!Vector2Equals(Snake.pos, pastpos))
     {
         QV2_add(&tails, Snake.pos);
     }
 
-    // Removing Excess
+    // Removing Excess tails
     while (tails.length > SCORE)
     {
         QV2_pop(&tails);
     }
+
+    // Record position so only push to tail if snake has moved grid
     pastpos = Snake.pos;
 }
 
 // Drawing
 void Draw()
 {
+    // Background Function
     Background();
+
+    // Head
     DrawObjectGrid(&Snake);
+
+    // Tail
     TransverseNodes(tails.head, DrawTailGrid);
+
+    // "Eyes"
+    DrawRectangle(Snake.pos.x * gridSize + 5, Snake.pos.y * gridSize + 5, gridSize - 10, gridSize - 10, WHITE);
+    DrawRectangle(Snake.pos.x * gridSize + 10, Snake.pos.y * gridSize + 10, gridSize - 20, gridSize - 20, BROWN);
+
+    // Apple
     DrawObjectGrid(&Apple);
 }
 
 void Background()
 {
     // Overall background 
-    ClearBackground(GRAY);
+    ClearBackground((Color){100, 100, 100, 100});
     
+    // Score text 
     static char scoreText[20];
     sprintf(scoreText, "SCORE: %d\n", SCORE - 5);
-
+    // Highscore text(pending functionality)
     static char hiScoreText[20];
     sprintf(hiScoreText, "HI: %d\n", HIGHSCORE);
+
     // Scoreboard
     DrawText(scoreText, SCOREBOARD.x, SCOREBOARD.y, 30, WHITE);
     DrawText(hiScoreText, SCOREBOARD.x, SCOREBOARD.y + 30, 30, WHITE);
     
-    DrawTexture(desert, 0, 0, WHITE);
-    // Play grid (Darkened)
-    //DrawRectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, (Color){0, 0, 0, 0x30});
+    // Play grid
+    DrawRectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, (Color){0, 0, 0, 0x30});
     for (int i = 0; i < GRID_HEIGHT; i++)
     for (int j = 0; j < GRID_WIDTH; j++)
     {
-        //DrawRectangle(j * gridSize + offset, i * gridSize + offset, gridSize - offset, gridSize - offset, (Color){0, 0, 0, 0x30});
+        DrawRectangle(j * gridSize + offset, i * gridSize + offset, gridSize - offset, gridSize - offset, (Color){0, 0, 0, 100});
     }
 }

@@ -4,9 +4,12 @@
 #include "raymath.h"
 #include "data_structures.h"
 
+// Defined in Game.c
 extern const int gridSize, offset, GRID_WIDTH, GRID_HEIGHT;
-extern int HIGHSCORE;
+extern int HIGHSCORE, SCORE;
+extern Sound death;
 
+// Printing Vector2
 void Vector2Print(Vector2* n)
 {
     printf("%f %f\n", n->x, n->y);
@@ -21,35 +24,44 @@ typedef struct Object
     Vector2 vel;
 } Object;
 
-extern Object Snake;
-// Randomize Apple Position
+// Randomize Object Position, used for apple reset
 void MoveRandom(Object *o)
 {
     o->pos.x = (rand() % GRID_WIDTH);
     o->pos.y = (rand() % GRID_HEIGHT);
 }
-// Drawing Rectangles
-// Floor to fit grid
+
+// Snake death function
+extern Object Snake;
+void Die()
+{
+    // Var SCORE is actually the tail length, default to 5
+    if (SCORE > HIGHSCORE) HIGHSCORE = SCORE - 5;
+    
+    SCORE = 5;
+    PlaySound(death);
+
+    // Return to position (optional)
+    // Snake.rpos = (Vector2){20, 20};
+}
+
+// Drawing as Grids
 void DrawObjectGrid(Object *a)
 {
     DrawRectangle(a->pos.x * gridSize + offset, a->pos.y * gridSize + offset, gridSize - offset, gridSize - offset, a->color);
 }
 
-// Drawing Transversed Linkedlist
+// Drawing Transversed Tail Linkedlist
 void DrawTailGrid(NodeV2 *i)
 {
     DrawRectangle(i->val.x * gridSize + offset, i->val.y * gridSize + offset, gridSize - offset, gridSize - offset, Snake.color);
 }
 
-extern int SCORE;
-// Check tail-head transversed
+// Check tail-head transversed, if same then death
 void CheckTailHead(NodeV2 *t)
 {
-    //printf("%.2f %.2f\n", t->val.x, t->val.y);
     if (Vector2Equals(t->val, Snake.pos) && !(t->next == NULL))
     {
-        printf("HIT:\n");
-        if (SCORE > HIGHSCORE) HIGHSCORE = SCORE;
-        SCORE = 5;
+        Die();
     }
 }

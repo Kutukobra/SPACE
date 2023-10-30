@@ -2,6 +2,7 @@
 
 extern Object Snake;
 // Taking Inputs
+// Snake Speed
 const float SNAKE_SPEED = 0.3;
 void Inputs()
 {
