@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include <stdio.h>
 
+// Node for linkedlist
 typedef struct NodeV2
 {
     Vector2 val;
@@ -21,6 +22,7 @@ void NV2_Print(NodeV2* n)
     printf("%lf %lf\n", n->val.x, n->val.y);
 }
 
+// Transverse a linked list and operate the function f
 void TransverseNodes(NodeV2 *n, void (*f)(NodeV2 *p))
 {
     NodeV2* i = n;
@@ -31,6 +33,8 @@ void TransverseNodes(NodeV2 *n, void (*f)(NodeV2 *p))
     }
 }
 
+// Queue as linked list 
+// Insert at tail, pop at head
 typedef struct QueueV2
 {
     NodeV2* head;
@@ -57,6 +61,7 @@ bool QV2_isEmpty(QueueV2* q)
     return q->head == NULL;
 }
 
+// Insert value to queue at tail as node
 void QV2_add(QueueV2* q, Vector2 val)
 {
     NodeV2* add = NV2_Init(val);
@@ -72,6 +77,7 @@ void QV2_add(QueueV2* q, Vector2 val)
     q->length++;
 }
 
+// Remove value at head
 Vector2 QV2_pop(QueueV2* q)
 {
     if (QV2_isEmpty(q))

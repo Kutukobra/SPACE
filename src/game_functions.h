@@ -9,6 +9,8 @@
 
 void Vector2Print(Vector2 *n);
 
+void Die();
+
 // Game Object Struct: Color, position on grid, real floating position, velocity
 typedef struct Object
 {
